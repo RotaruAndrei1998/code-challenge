@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useReducer } from "react";
+import { CsvParser } from "./pages";
+import { ModalContext } from "./context";
+import "antd/dist/antd.css";
+
+const initialModalState = {
+  selectedItem: {},
+  isModalVisible: false,
+};
+const modalReducer = (state, action) => {
+  switch (action.type) {
+    case "EDIT":
+      return { selectedItem: action.payload, isModalVisible: true };
+    case "ADD":
+      return { selectedItem: null, isModalVisible: true };
+    case "CLOSE":
+      return { selectedItem: null, isModalVisible: false };
+    default:
+      return { selectedItem: null, isModalVisible: false };
+  }
+};
 
 function App() {
+  const [modalState, dispatchModalState] = useReducer(
+    modalReducer,
+    initialModalState
+  );
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ModalContext.Provider value={{ modalState, dispatchModalState }}>
+        <CsvParser />
+      </ModalContext.Provider>
     </div>
   );
 }
